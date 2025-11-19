@@ -26,23 +26,24 @@ $usuarios = [
     "CarlosBasulto" => "CarlosBasulto"
 ];
 
-$input = json_decode(file_get_contents('php://input'), true); //
-$username = $input['username'] ?? '';
-$password = $input['password'] ?? '';
+$input = json_decode(file_get_contents('php://input'), true); //variable que contiene todos los datos json que el cliente envió en el cuerpo de la peticion http, convertidos en un array asociativo de PHP. El parámetro true es importante porque sin él devolvería un objeto en lugar de un array
+$nombreUsuario = $input['nombre-usuario'] ?? ''; //extrae el nombre del usuario, si no existe o es nulo asigna cadena vacia por defecto
+$contraseña = $input['contraseña'] ?? ''; //extrae la contraseña, si no existe o es nula asigna cadena vacía por defecto
 
-if (empty($username) || empty($password)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Faltan credenciales']);
-    exit();
+if (empty($username) || empty($password)) { //si el nombreUsuario o la contraseña están vacias
+    http_response_code(400); //se establece el codigo de estado HTTP a 404, indicanso que la petición está mal formada
+    echo json_encode(['error' => 'Faltan credenciales']); //repuesta json a cliente diciendo que faltan credenciales
+    exit(); //Termina la ejecución
 }
 
-// Validar credenciales
-if (isset($usuarios[$username]) && $usuarios[$username] === $password) {
-    // Crear payload del token
+// Validar credenciales con el array
+if (isset($usuarios[$username]) && $usuarios[$username] === $password) { //verifica que exista la clave en el array y compara que la contraseña coincida exactamente
+    // Crear payload (datos) que queremos guardar dentro del token
+    //Sirve para cuando el ciente envíe este token en futuras peticiones, el servidor sabrá quien es el usuario sin necesidad de consultas la BD cada vez.
     $payload = [
-        'username' => $username,
-        'iat' => time(),
-        'exp' => time() + 3600
+        'nombre-usuario' => $nombreUsuario, //guarda el nombre de usuario que acaba de iniciar sesion
+        'iat' => time(), //permite saber cuando se creó el token
+        'exp' => time() + 3600 //expiración del token,por seguridad, si alguien lo roba, solo podra usarlo durante 1 hora, después de este tiempo el token no será valido
     ];
     
     // Generar token con base64_encode
