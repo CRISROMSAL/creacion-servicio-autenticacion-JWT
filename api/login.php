@@ -30,14 +30,14 @@ $input = json_decode(file_get_contents('php://input'), true); //variable que con
 $nombreUsuario = $input['nombre-usuario'] ?? ''; //extrae el nombre del usuario, si no existe o es nulo asigna cadena vacia por defecto
 $contraseña = $input['contraseña'] ?? ''; //extrae la contraseña, si no existe o es nula asigna cadena vacía por defecto
 
-if (empty($username) || empty($password)) { //si el nombreUsuario o la contraseña están vacias
+if (empty($nombreUsuario) || empty($contraseña)) { //si el nombreUsuario o la contraseña están vacias
     http_response_code(400); //se establece el codigo de estado HTTP a 404, indicanso que la petición está mal formada
     echo json_encode(['error' => 'Faltan credenciales']); //repuesta json a cliente diciendo que faltan credenciales
     exit(); //Termina la ejecución
 }
 
 // Validar credenciales con el array
-if (isset($usuarios[$username]) && $usuarios[$username] === $password) { //verifica que exista la clave en el array y compara que la contraseña coincida exactamente
+if (isset($usuarios[$nombreUsuario]) && $usuarios[$nombreUsuario] === $contraseña) { //compara las credenciales recibidas con las almacenadas en el servidor
     // Crear payload (datos) que queremos guardar dentro del token
     //Sirve para cuando el ciente envíe este token en futuras peticiones, el servidor sabrá quien es el usuario sin necesidad de consultas la BD cada vez.
     $payload = [
@@ -47,19 +47,21 @@ if (isset($usuarios[$username]) && $usuarios[$username] === $password) { //verif
     ];
     
     // Generar token con base64_encode
-    $token = base64_encode(json_encode($payload));
+    $token = base64_encode(json_encode($payload)); //Convierte el array PHP a una cadena de texto en formato json y posteriormete este texto lo codifica eb Base64, convirtiendola en una cadena de texto segura
     
-    http_response_code(200);
-    echo json_encode([
-        'success' => true,
-        'token' => $token,
-        'username' => $username
+    http_response_code(200); //Se establece el codigo de http a 200, que indica que todo va bien
+    echo json_encode([ //Envia una respuesta json al cliente  con 3 campos:
+        'success' => true, //booleano que dice que el login fue existoso
+        'token' => $token, //El token que acabamos de crear, sirve para que el cliente lo guarde un un localStorage y lo envíe en cada petición futura para demostrar que está autenticado
+        'nombre-usuario' => $nombreUsuario //El nombre de usuario que inició sesión.
     ]);
-} else {
-    http_response_code(401);
-    echo json_encode([
-        'success' => false,
-        'error' => 'Usuario o contraseña incorrectos'
+} else { //si el usuario o la contraseña son incorrector
+    http_response_code(401); //se establece el codigo http a 401 que significa que no está autorizado o que las credenciales no son validas
+    echo json_encode([ //envía un json indicando que el login falló
+        'success' => false, //indica que la operación no fue exitosa
+        'error' => 'Usuario o contraseña incorrectos' //mensaje de error que el frontend puede mostrar al usuario
     ]);
 }
 ?>
+
+
