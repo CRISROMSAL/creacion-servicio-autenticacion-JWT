@@ -17,6 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') { //Verifica que la peticion sea post
     exit(); //Termina la ejecucion
 }
 
+// Clave secreta para firmar el token
+define('SECRET_KEY', 'mi_clave_secreta_re_cordis_2025');
+
 // Array de usuarios 
 $usuarios = [
     "admin" => "1234",
@@ -25,6 +28,11 @@ $usuarios = [
     "CristinaRoman" => "CristinaRoman",
     "CarlosBasulto" => "CarlosBasulto"
 ];
+
+// Función auxiliar para codificar en Base64URL
+function base64UrlEncode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '='); //(reemplaza +/ por -_ y elimina =)
+}
 
 $input = json_decode(file_get_contents('php://input'), true); //variable que contiene todos los datos json que el cliente envió en el cuerpo de la peticion http, convertidos en un array asociativo de PHP. El parámetro true es importante porque sin él devolvería un objeto en lugar de un array
 $nombreUsuario = $input['nombre-usuario'] ?? ''; //extrae el nombre del usuario, si no existe o es nulo asigna cadena vacia por defecto
@@ -38,6 +46,14 @@ if (empty($nombreUsuario) || empty($contraseña)) { //si el nombreUsuario o la c
 
 // Validar credenciales con el array
 if (isset($usuarios[$nombreUsuario]) && $usuarios[$nombreUsuario] === $contraseña) { //compara las credenciales recibidas con las almacenadas en el servidor
+
+    //Le dice al servidor como debe verificar la firma del token
+    //contiene el algoritmo usado para firmar y el tipo de token
+    $header = [
+        'alg' => 'HS256',
+        'typ' => 'JWT'
+    ];
+    
     // Crear payload (datos) que queremos guardar dentro del token
     //Sirve para cuando el ciente envíe este token en futuras peticiones, el servidor sabrá quien es el usuario sin necesidad de consultas la BD cada vez.
     $payload = [
@@ -46,8 +62,16 @@ if (isset($usuarios[$nombreUsuario]) && $usuarios[$nombreUsuario] === $contrase�
         'exp' => time() + 3600 //expiración del token,por seguridad, si alguien lo roba, solo podra usarlo durante 1 hora, después de este tiempo el token no será valido
     ];
     
-    // Generar token con base64_encode
-    $token = base64_encode(json_encode($payload)); //Convierte el array PHP a una cadena de texto en formato json y posteriormete este texto lo codifica eb Base64, convirtiendola en una cadena de texto segura
+    // Codificar header y payload 
+    $headerEncoded = base64UrlEncode(json_encode($header));
+    $payloadEncoded = base64UrlEncode(json_encode($payload));
+
+    //signature (firma)
+    $signature = hash_hmac('sha256', $headerEncoded . '.' . $payloadEncoded, SECRET_KEY, true);
+    $signatureEncoded = base64UrlEncode($signature);
+    
+    // Unir las 3 partes: header.payload.signature
+    $token = $headerEncoded . '.' . $payloadEncoded . '.' . $signatureEncoded;
     
     http_response_code(200); //Se establece el codigo de http a 200, que indica que todo va bien
     echo json_encode([ //Envia una respuesta json al cliente  con 3 campos:
