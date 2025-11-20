@@ -15,36 +15,44 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') { //Verifica que la peticion sea get
     exit(); //Termina la ejecucion
 }
 
-define('SECRET_KEY', 'mi_clave_secreta_re_cordis_2025');
+define('SECRET_KEY', 'mi_clave_secreta_re_cordis_2025'); // Definimos la misma clave secreta usada en el login para validar la firma.
 
+
+
+//Extracción del token
 $headers = getallheaders(); // Obtiene todas las cabeceras HTTP de la petición y las devuelve en formato array asociativo
 $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? ''; //Busca la cabecera authorization en el array con 3 intentos por si viene en diferentes formatos; Authorization, autorizathion, si no existen ninguno de estos dos cadena vacía. COMO PHP ES SENSIBLE A MAYUSCULAS Y MINUSCULAS POR ESO BUSCA AMBAS
 
-if (empty($authHeader) || !preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-    http_response_code(403);
+$partes = explode(' ', $authHeader); // Separa "Bearer TOKEN" en un array
+
+// Verifica que haya al menos 2 partes y que la primera parte sea la palabra estándar "Bearer".
+if (count($partes) < 2 || $partes[0] !== 'Bearer') {
+    http_response_code(403); //si no lo cumple error
     echo json_encode(['error' => 'Token no proporcionado']);
     exit();
 }
 
-$token = $matches[1];
+$token = $partes[1]; //guardamos la segunda parte que es el token real
 
 
+//validación y decoddificacion de JWT
 try {
-    // Separar las 3 partes del JWT
-    $tokenParts = explode('.', $token);
+    // Separar las 3 partes del JWT por puntos, Header.Payload.Signature
+    $tokenParts = explode('.', $token); //Rompe el string por los puntos
     
-    if (count($tokenParts) !== 3) {
-        throw new Exception('Token inválido');
+    if (count($tokenParts) !== 3) { //si no tiene 3 partes, no es un jwt valido
+        throw new Exception('Token inválido'); //se lanza error para ir al bloque catch
     }
     
+    // Asignamos cada parte a una variable: Header, Payload y Firma (codificadas).
     list($headerEncoded, $payloadEncoded, $signatureEncoded) = $tokenParts;
     
-    // Verificar la firma
-    $signature = base64_decode(strtr($signatureEncoded, '-_', '+/'));
-    $expectedSignature = hash_hmac('sha256', $headerEncoded . '.' . $payloadEncoded, SECRET_KEY, true);
+    // Verificar la firma (firma y firma esperada)
+    $signature = base64_decode(strtr($signatureEncoded, '-_', '+/')); // Decodificamos la firma que venía en el token., strtr cambia los caracteres URL - y _ por los estándar Base64 + y /
+    $expectedSignature = hash_hmac('sha256', $headerEncoded . '.' . $payloadEncoded, SECRET_KEY, true); //Calculamos la firma que DEBERÍA tener el token usando nuestra SECRET_KEY y los datos recibidos.
     
-    if (!hash_equals($signature, $expectedSignature)) {
-        throw new Exception('Firma inválida');
+    if (!hash_equals($signature, $expectedSignature)) { // Comparamos la firma que llegó con la que calculamos nosotros (la firma con la firma esperada).
+        throw new Exception('Firma inválida'); // Si no coinciden, el token fue modificado o es falso.
     }
     
     // Decodificar el payload
@@ -57,7 +65,7 @@ try {
         exit();
     }
     
-    $nombreUsuario = $payload['nombre-usuario'];
+    $nombreUsuario = $payload['nombre-usuario']; //Extraemos el nombre del usuario guardado dentro del token.
     
     $mensajes = [
         "admin" => "Bienvenido administrador, aquí tienes acceso al sistema.",
@@ -67,18 +75,19 @@ try {
         "CarlosBasulto" => "Bienvenido Carlos Basulto, aquí puedes encontrar la información que necesites."
     ];
     
-    
+    $mensaje_bienvenida = $mensajes[$nombreUsuario]; // Seleccionamos el mensaje específico para este usuario.
+
     http_response_code(200);
-    echo json_encode([
+    echo json_encode([ // Convierte el array de respuesta a JSON para enviarlo al navegador.
         'success' => true,
-        'usuario' => $username,
+        'usuario' => $nombreUsuario,
         'fecha' => date('d/m/Y'),
         'hora' => date('H:i:s'),
         'mensaje' => $mensaje_bienvenida
     ]);
     
-} catch (Exception $e) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Token inválido']);
+} catch (Exception $e) { // Si algo falló dentro del 'try' (firma mal, formato mal, etc.)
+    http_response_code(403); //error
+    echo json_encode(['error' => 'Token inválido']); // Mensaje genérico de error de seguridad.
 }
 ?>    
