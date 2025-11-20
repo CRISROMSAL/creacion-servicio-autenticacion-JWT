@@ -1,4 +1,4 @@
-php<?php
+<?php
 header('Content-Type: application/json'); //respuesta en formato json
 header('Access-Control-Allow-Origin: *'); //permite que cualquier origen pueda hacer peticiones, sin esto el navegador bloquearía las peticiones desde index.html
 header('Access-Control-Allow-Methods: POST, OPTIONS'); //permitir solo el método POST y OPTIONS
