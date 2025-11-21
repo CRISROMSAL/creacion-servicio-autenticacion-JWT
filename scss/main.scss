@@ -1,0 +1,176 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'animations' as *;
+@use 'sass:color';
+
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;600;700&family=Raleway:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: $font-principal;
+    background: linear-gradient(-45deg, $gradient-colors);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    @include flex-center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+
+    img {
+        max-width: $logo-size;
+        animation: floatLogo 3s ease-in-out infinite;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+    }
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($color-principal, 0.1);
+    padding: $container-padding;
+    border-radius: $border-radius;
+    @include box-shadow(0, 8px, 32px, rgba($color-principal, 0.15));
+    width: $container-width;
+    max-width: 100%;
+    animation: slideIn 0.8s ease-out;
+    @include transition(transform);
+    @include transition(box-shadow);
+
+    &:hover {
+        transform: translateY(-5px);
+        @include box-shadow(0, 15px, 40px, rgba($color-principal, 0.2));
+    }
+}
+
+h2 {
+    font-family: $font-titulos;
+    color: $color-principal;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-family: $font-titulos;
+    color: $color-secundario;
+    margin-bottom: 10px;
+}
+
+p {
+    color: $color-texto;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid $color-principal;
+    border-radius: 5px;
+    font-size: 14px;
+    @include transition(border-color);
+
+    &:focus {
+        outline: none;
+        border-color: $color-secundario;
+    }
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: $color-secundario;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    @include transition(background-color);
+
+    &:hover {
+        background-color: color.adjust($color-secundario, $lightness: -5%);
+    }
+}
+
+.btn-logout {
+    background-color: $color-principal;
+
+    &:hover {
+        background-color: color.adjust($color-principal, $lightness: -10%);
+    }
+}
+
+.error {
+    color: $color-error;
+    background-color: $color-error-bg;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+    display: none;
+}
+
+.mensaje {
+    background-color: rgba(255, 232, 214, 1);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid rgba(255, 107, 107, 1);
+    margin: 15px 0;
+}
+
+.mensaje p {
+    color: $color-texto;
+    text-align: left;
+    margin: 5px 0;
+}
+
+.warning {
+    background-color: $color-warning-bg;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid $color-principal;
+    margin: 15px 0;
+
+    p {
+        color: $color-texto;
+        text-align: left;
+        margin: 8px 0;
+    }
+}
+
+.footer {
+    background-color: $color-footer-bg;
+    color: $color-texto;
+    text-align: center;
+    font-family: $font-principal;
+    padding: 25px 20px;
+    font-size: 15px;
+    line-height: 1.8;
+    width: 100%;
+
+    p {
+        margin: 5px 0;
+    }
+}

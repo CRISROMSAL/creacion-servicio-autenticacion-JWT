@@ -1,0 +1,16 @@
+// Mixin para transiciones
+@mixin transition($property: all, $duration: 0.3s, $ease: ease) {
+    transition: $property $duration $ease;
+}
+
+// Mixin para centrar con flexbox
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// Mixin para sombras
+@mixin box-shadow($x: 0, $y: 4px, $blur: 20px, $color: rgba(0, 0, 0, 0.1)) {
+    box-shadow: $x $y $blur $color;
+}
