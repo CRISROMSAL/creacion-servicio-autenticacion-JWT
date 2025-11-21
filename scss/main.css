@@ -1,0 +1,183 @@
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;600;700&family=Raleway:wght@300;400;600&display=swap");
+@keyframes gradientAnimation {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+@keyframes floatLogo {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Raleway", sans-serif;
+  background: linear-gradient(-45deg, rgb(249, 221, 233), rgb(252, 228, 236), rgb(248, 187, 208), rgb(244, 143, 177));
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.logo img {
+  max-width: 250px;
+  animation: floatLogo 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  border: 1px solid rgba(193, 39, 45, 0.1);
+  padding: 60px;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(193, 39, 45, 0.15);
+  width: 550px;
+  max-width: 100%;
+  animation: slideIn 0.8s ease-out;
+  transition: transform 0.3s ease;
+  transition: box-shadow 0.3s ease;
+}
+.container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(193, 39, 45, 0.2);
+}
+
+h2 {
+  font-family: "Bodoni Moda", serif;
+  color: rgb(193, 39, 45);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-family: "Bodoni Moda", serif;
+  color: rgb(245, 122, 170);
+  margin-bottom: 10px;
+}
+
+p {
+  color: rgb(99, 99, 100);
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid rgb(193, 39, 45);
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+input:focus {
+  outline: none;
+  border-color: rgb(245, 122, 170);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: rgb(245, 122, 170);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: rgb(243.2167832168, 98.2832167832, 154.8426573427);
+}
+
+.btn-logout {
+  background-color: rgb(193, 39, 45);
+}
+.btn-logout:hover {
+  background-color: rgb(150.5732758621, 30.4267241379, 35.1077586207);
+}
+
+.error {
+  color: rgb(231, 76, 60);
+  background-color: rgb(250, 219, 216);
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.mensaje p {
+  color: rgb(99, 99, 100);
+  text-align: left;
+  margin: 5px 0;
+}
+
+.warning {
+  background-color: rgb(255, 243, 205);
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid rgb(193, 39, 45);
+  margin: 15px 0;
+}
+.warning p {
+  color: rgb(99, 99, 100);
+  text-align: left;
+  margin: 8px 0;
+}
+
+.footer {
+  background-color: rgb(249, 221, 233);
+  color: rgb(99, 99, 100);
+  text-align: center;
+  font-family: "Raleway", sans-serif;
+  padding: 25px 20px;
+  font-size: 15px;
+  line-height: 1.8;
+  width: 100%;
+}
+.footer p {
+  margin: 5px 0;
+}/*# sourceMappingURL=main.css.map */
