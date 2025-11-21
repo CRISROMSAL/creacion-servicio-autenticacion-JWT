@@ -1,34 +1,41 @@
+//Importa los archivos 
 @use 'variables' as *;
 @use 'mixins' as *;
-@use 'animations' as *;
-@use 'sass:color';
+@use 'animation' as *;
 
+//Importa el modulo de funciones de colores de SAAS para ajustar los colores de oscurecer y aclarar
+@use 'sass:color'; 
+
+// Importa las fuentes de Google Fonts (Bodoni Moda y Raleway)
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;600;700&family=Raleway:wght@300;400;600&display=swap');
 
+// Reset básico: elimina márgenes, padding y estandariza el modelo de caja
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+// Configuración para html y body, hace que ocupe el 100% de la altura de la ventana
 html, body {
     height: 100%;
 }
 
 body {
     font-family: $font-principal;
-    background: linear-gradient(-45deg, $gradient-colors);
-    background-size: 400% 400%;
-    animation: gradientAnimation 15s ease infinite;
+    background: linear-gradient(-45deg, $gradient-colors);  // Crea un fondo con gradiente de 4 colores que se mueve en diagonal (-45deg)
+    background-size: 400% 400%; // Hace el gradiente 4 veces más grande para que la animación sea suave
+    animation: gradientAnimation 15s ease infinite; // Aplica la animación del gradiente (definida en _animation.scss)
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
+// Contenedor principal que contiene el logo y el formulario
 .main-content {
     flex: 1;
     @include flex-center;
-    flex-direction: column;
+    flex-direction: column; // Organiza los elementos en columna (logo arriba, container abajo)
     padding: 20px;
 }
 
@@ -38,27 +45,29 @@ body {
 
     img {
         max-width: $logo-size;
-        animation: floatLogo 3s ease-in-out infinite;
-        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        animation: floatLogo 3s ease-in-out infinite; // Aplica la animación de flotación (definida en _animation.scss)
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2)); // Añade una sombra al logo
     }
 }
 
+// Contenedor principal del formulario (tarjeta blanca)
 .container {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba($color-principal, 0.1);
+    background: rgba(255, 255, 255, 0.85); // Fondo blanco semi-transparente (85% opaco)
+    backdrop-filter: blur(10px); // Efecto de cristal
+    border: 1px solid rgba($color-principal, 0.1); // Borde semi-transparente con color principal
     padding: $container-padding;
     border-radius: $border-radius;
-    @include box-shadow(0, 8px, 32px, rgba($color-principal, 0.15));
+    @include box-shadow(0, 8px, 32px, rgba($color-principal, 0.15)); // Aplica sombra usando el mixin (de _mixins.scss)
     width: $container-width;
     max-width: 100%;
-    animation: slideIn 0.8s ease-out;
-    @include transition(transform);
-    @include transition(box-shadow);
+    animation: slideIn 0.8s ease-out; // Aplica la animación de entrada (definida en _animation.scss)
+    @include transition(transform); // Aplica transición suave al transform usando el mixin
+    @include transition(box-shadow); // Aplica transición suave al box-shadow usando el mixin
 
+    // Cuando pasamos el ratón sobre el container
     &:hover {
-        transform: translateY(-5px);
-        @include box-shadow(0, 15px, 40px, rgba($color-principal, 0.2));
+        transform: translateY(-5px); // Mueve el container 5px hacia arriba
+        @include box-shadow(0, 15px, 40px, rgba($color-principal, 0.2)); // Aumenta la sombra para dar efecto de elevación
     }
 }
 
@@ -90,10 +99,10 @@ input {
     border-radius: 5px;
     font-size: 14px;
     @include transition(border-color);
-
+    //Al hacer click sobre los imput para escribir por ejemplo el nombre y la contraseña
     &:focus {
-        outline: none;
-        border-color: $color-secundario;
+        outline: none; //Se elimina el borde azul que tuene por defecto el navegador
+        border-color: $color-secundario; //Cambia el color del borde del primario al secundario
     }
 }
 
@@ -105,20 +114,23 @@ button {
     border: none;
     border-radius: 5px;
     font-size: 16px;
-    cursor: pointer;
+    cursor: pointer; // Cursor de manita al pasar el ratón
     margin-top: 10px;
-    @include transition(background-color);
+    @include transition(background-color); // Transición suave del color de fondo usando el mixin
 
+    // Cuando pasamos el ratón sobre el botón
     &:hover {
-        background-color: color.adjust($color-secundario, $lightness: -5%);
+        background-color: color.adjust($color-secundario, $lightness: -5%) // Se oscurece el color secundario un 5%. color.adjust() es una función de SASS. $lightness es un parámetro de la función
     }
 }
 
+// Botón de cerrar sesión
 .btn-logout {
     background-color: $color-principal;
 
+    // Cuando pasamos el ratón sobre el botón
     &:hover {
-        background-color: color.adjust($color-principal, $lightness: -10%);
+        background-color: color.adjust($color-principal, $lightness: -10%); //se oscurece el color principal un 10%
     }
 }
 
@@ -129,15 +141,6 @@ button {
     border-radius: 5px;
     margin-top: 10px;
     text-align: center;
-    display: none;
-}
-
-.mensaje {
-    background-color: rgba(255, 232, 214, 1);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid rgba(255, 107, 107, 1);
-    margin: 15px 0;
 }
 
 .mensaje p {

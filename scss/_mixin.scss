@@ -1,3 +1,4 @@
+//Funciones que podemos reutilizar
 // Mixin para transiciones
 @mixin transition($property: all, $duration: 0.3s, $ease: ease) {
     transition: $property $duration $ease;
